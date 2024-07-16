@@ -1,10 +1,10 @@
 package models
 
-// Frame 表示物理内存中的一个块
-type Frame struct {
-	FrameNumber int // 块号
-	PageNumber  int // 当前存储的页号，如果为空则为-1
-}
+//// Frame 表示物理内存中的一个块
+//type Frame struct {
+//	FrameNumber int // 块号
+//	PageNumber  int // 当前存储的页号，如果为空则为-1
+//}
 
 // Memory 表示物理内存
 type Memory struct {

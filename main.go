@@ -2,64 +2,33 @@ package main
 
 import (
 	"fmt"
-	"osLab2/constraint"
+	"osLab2/algorithm"
 	"osLab2/models"
 )
 
+// 测试案例：https://m.ofweek.com/ai/2021-04/ART-201721-11000-30495592.html
 func main() {
-	// 示例：创建一个页表和物理内存
-	pageTable := models.NewPageTable(3)
-	memory := models.NewMemory(4)
+	// 初始化虚拟内存管理器，设置物理内存帧数和页面置换算法
+	vmm := models.NewVirtualMemoryManager(3, algorithm.NewFIFOPageReplacement())
 
-	// 添加页面到页表
-	pageTable.Pages[0] = &models.PageTableEntry{PageNumber: 0, FrameNumber: -1}
-	pageTable.Pages[1] = &models.PageTableEntry{PageNumber: 1, FrameNumber: -1}
+	// 创建进程并添加到虚拟内存管理器中
+	// 真实物理帧只有3个，而虚拟页号有5个（5个虚拟页共享3个物理帧），所以会发生缺页错误和页面置换情况
+	process1 := models.NewProcess(1, 5)
+	vmm.AddProcess(process1)
 
-	// 分配物理块给页面
-	frameNumber, err := memory.AllocateFrame(0)
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		pageTable.Pages[0].FrameNumber = frameNumber
-	}
+	// 模拟访问地址{0, 1, 2, 0, 3, 4, 1, 0, 2}
 
-	frameNumber, err = memory.AllocateFrame(1)
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		pageTable.Pages[1].FrameNumber = frameNumber
-	}
+	// 测试案例来自王道：https://m.ofweek.com/ai/2021-04/ART-201721-11000-30495592.html
+	pagesToAccess := []int{3, 2, 1, 0, 3, 2, 4, 3, 2, 1, 0, 4}
 
-	// 逻辑地址转换为物理地址
-	logicalAddress := 2048 // 页号为2，偏移量为0
-	physicalAddress, err := pageTable.Translate(logicalAddress)
-	if err != nil {
-		fmt.Println("Translate Error:", err)
-		// 处理缺页中断
-		pageNumber := logicalAddress / constraint.PageSize
-		err = models.HandlePageFault(pageTable, memory, pageNumber)
-		if err != nil {
-			fmt.Println("Handle Page Fault Error:", err)
+	for _, pageNumber := range pagesToAccess {
+		frameNumber, success := vmm.AccessAddress(1, pageNumber)
+		if success {
+			fmt.Printf("Accessed page %d in frame %d\n", pageNumber, frameNumber)
 		} else {
-			// 再次尝试地址转换
-			physicalAddress, err = pageTable.Translate(logicalAddress)
-			if err != nil {
-				fmt.Println("Translate Error after Page Fault:", err)
-			} else {
-				fmt.Printf("Logical Address: %d -> Physical Address: %d\n", logicalAddress, physicalAddress)
-			}
+			fmt.Printf("Failed to access page %d\n", pageNumber)
 		}
-	} else {
-		fmt.Printf("Logical Address: %d -> Physical Address: %d\n", logicalAddress, physicalAddress)
 	}
-
-	pageTableStr := "当前页表 =>\n"
-	for _, entry := range pageTable.Pages {
-		pageTableStr += fmt.Sprintf("页号：%d，块号：%d\n", entry.PageNumber, entry.FrameNumber)
-	}
-	fmt.Println(pageTableStr)
-	//fmt.Printf("Page Table: %+v\n", PrettyPrint(pageTable.Pages))
-	//fmt.Printf("Memory: %+v\n", PrettyPrint(memory.Frames))
 }
 
 //func PrettyPrint(v interface{}) string {

@@ -31,6 +31,8 @@ func NewProcess(id int, pageCount int) *Process {
 		Pages: make([]*PageTableEntry, pageCount),
 		Size:  pageCount,
 	}
+
+	// 初始化页表，所有页面均未加载到内存
 	for i := 0; i < pageCount; i++ {
 		pageTable.Pages[i] =
 			&PageTableEntry{
@@ -38,6 +40,7 @@ func NewProcess(id int, pageCount int) *Process {
 				FrameNumber: -1,
 				IsInMemory:  false}
 	}
+
 	return &Process{PID: id, PageTable: pageTable}
 }
 
@@ -59,16 +62,4 @@ func (pt *PageTable) Translate(logicalAddress int) (int, error) {
 	}
 	physicalAddress := pt.Pages[index].FrameNumber*constraint.PageSize + offset
 	return physicalAddress, nil
-}
-
-// HandlePageFault 处理缺页中断
-func HandlePageFault(pt *PageTable, memory *Memory, pageNumber int) error {
-	frameNumber, err := memory.AllocateFrame(pageNumber)
-	if err != nil {
-		return err
-	}
-	pt.Pages[pageNumber] =
-		&PageTableEntry{PageNumber: pageNumber,
-			FrameNumber: frameNumber}
-	return nil
 }
