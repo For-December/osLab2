@@ -17,13 +17,13 @@ func NewCLOCKPageReplacement(frameCount int) *CLOCKPageReplacement {
 func (clock *CLOCKPageReplacement) AccessPage(pageNumber int) {
 	for i, page := range clock.Pages {
 		if page == pageNumber {
-			clock.Clock[i] = true
+			clock.Clock[i] = true // 标记为已访问
 			return
 		}
 	}
 	for i := range clock.Pages {
 		if clock.Pages[i] == -1 {
-			clock.Pages[i] = pageNumber
+			clock.Pages[i] = pageNumber // 将页面添加到空闲位置
 			clock.Clock[i] = true
 			return
 		}
@@ -38,8 +38,8 @@ func (clock *CLOCKPageReplacement) ReplacePage() int {
 
 			// 找到要被替换的页面
 			pageToReplace := clock.Pages[clock.Hand]
-			clock.Pages[clock.Hand] = -1
-			clock.Hand = (clock.Hand + 1) % len(clock.Clock)
+			clock.Pages[clock.Hand] = -1                     // 标记为空闲
+			clock.Hand = (clock.Hand + 1) % len(clock.Clock) // 循环移动指针
 			return pageToReplace
 		}
 
