@@ -38,7 +38,7 @@ func testAlgorithm(
 	for _, pageNumber := range pagesToAccess {
 		frameNumber, success := vmm.AccessAddress(1, pageNumber)
 		if success {
-			fmt.Printf("成功通过虚拟页号 %d in 访问到物理帧 %d\n", pageNumber, frameNumber)
+			fmt.Printf("成功通过虚拟页号 %d 访问到物理帧 %d\n", pageNumber, frameNumber)
 		} else {
 			fmt.Printf("Failed to access page %d\n", pageNumber)
 		}

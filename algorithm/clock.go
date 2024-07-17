@@ -10,6 +10,7 @@ func NewCLOCKPageReplacement(frameCount int) *CLOCKPageReplacement {
 	pages := make([]int, frameCount)
 
 	// fixBugs: 修复了pages数组的初始化问题
+	// pages数组初始化为-1，表示为空
 	for i := range pages {
 		pages[i] = -1
 	}
@@ -29,7 +30,7 @@ func (clock *CLOCKPageReplacement) AccessPage(pageNumber int) {
 	}
 	for i := range clock.Pages {
 		if clock.Pages[i] == -1 {
-			clock.Pages[i] = pageNumber // 将页面添加到空闲位置
+			clock.Pages[i] = pageNumber // 将页号放入时钟中轮转
 			clock.Clock[i] = true
 			return
 		}
