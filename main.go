@@ -7,6 +7,7 @@ import (
 )
 
 // 测试案例：https://m.ofweek.com/ai/2021-04/ART-201721-11000-30495592.html
+
 func main() {
 	// 初始化虚拟内存管理器，设置物理内存帧数和页面置换算法
 	vmm := models.NewVirtualMemoryManager(3, algorithm.NewFIFOPageReplacement())
@@ -24,7 +25,7 @@ func main() {
 	for _, pageNumber := range pagesToAccess {
 		frameNumber, success := vmm.AccessAddress(1, pageNumber)
 		if success {
-			fmt.Printf("Accessed page %d in frame %d\n", pageNumber, frameNumber)
+			fmt.Printf("成功通过虚拟页号 %d in 访问到物理帧 %d\n", pageNumber, frameNumber)
 		} else {
 			fmt.Printf("Failed to access page %d\n", pageNumber)
 		}

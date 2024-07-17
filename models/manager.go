@@ -33,6 +33,7 @@ func (vmm *VirtualMemoryManager) AddProcess(process *Process) {
 
 // AccessAddress 访问一个进程的某个虚拟页号，返回物理页号和是否成功
 func (vmm *VirtualMemoryManager) AccessAddress(processID, pageNumber int) (int, bool) {
+	// 查找进程
 	process, exists := vmm.processes[processID]
 	if !exists {
 		fmt.Printf("请求的进程 %d 不存在！\n", processID)
@@ -50,6 +51,14 @@ func (vmm *VirtualMemoryManager) AccessAddress(processID, pageNumber int) (int, 
 		fmt.Println("虚拟页号不存在，out of index error！")
 		return -1, false
 	}
+
+	pageTableStr := fmt.Sprintf("进程 %d 的当前页表：\n", processID)
+	for _, page := range process.PageTable.Pages {
+		pageTableStr += fmt.Sprintf(
+			"虚拟页号 %d -> 物理帧号 %d\n",
+			page.PageNumber, page.FrameNumber)
+	}
+	logger.DebugF(pageTableStr)
 
 	// 获取页表中该虚拟页号的页元素
 	page := process.PageTable.Pages[index]
@@ -82,7 +91,7 @@ func (vmm *VirtualMemoryManager) handlePageFault(process *Process, page *PageTab
 
 		// 找到需要替换的页面对应的帧号
 		frameNumber = vmm.memory.PageToFrame[pageToReplace]
-		fmt.Printf("Replacing page %d from frame %d\n", pageToReplace, frameNumber)
+		logger.WarningF("虚拟页 %d 被选中，替换为虚拟页 %d", pageToReplace, page.PageNumber)
 		for _, proc := range vmm.processes {
 
 			// 内置二分查找
@@ -121,5 +130,5 @@ func (vmm *VirtualMemoryManager) loadPageIntoFrame(process *Process, page *PageT
 	page.IsInMemory = true
 	page.FrameNumber = frameNumber
 	vmm.algorithm.AccessPage(page.PageNumber)
-	fmt.Printf("Loaded page %d of process %d into frame %d\n", page.PageNumber, process.PID, frameNumber)
+	fmt.Printf("加载物理帧 %d 作为页号 %d\n", frameNumber, page.PageNumber)
 }
