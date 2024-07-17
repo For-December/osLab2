@@ -9,8 +9,21 @@ import (
 // 测试案例：https://m.ofweek.com/ai/2021-04/ART-201721-11000-30495592.html
 
 func main() {
+
+	testAlgorithm("FIFO", algorithm.NewFIFOPageReplacement())
+	testAlgorithm("LRU", algorithm.NewLRUPageReplacement())
+	testAlgorithm("Clock", algorithm.NewCLOCKPageReplacement(3))
+	testAlgorithm("Random", algorithm.NewRandomPageReplacement(3))
+}
+
+func testAlgorithm(
+	name string,
+	replacementAlgorithm algorithm.PageReplacementAlgorithm) {
+
+	fmt.Printf("####################### 测试 %s 算法 #######################\n", name)
+
 	// 初始化虚拟内存管理器，设置物理内存帧数和页面置换算法
-	vmm := models.NewVirtualMemoryManager(3, algorithm.NewFIFOPageReplacement())
+	vmm := models.NewVirtualMemoryManager(3, replacementAlgorithm)
 
 	// 创建进程并添加到虚拟内存管理器中
 	// 真实物理帧只有3个，而虚拟页号有5个（5个虚拟页共享3个物理帧），所以会发生缺页错误和页面置换情况
