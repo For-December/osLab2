@@ -10,10 +10,10 @@ import (
 
 func main() {
 
-	testAlgorithm("FIFO", algorithm.NewFIFOPageReplacement())
-	testAlgorithm("LRU", algorithm.NewLRUPageReplacement())
+	//testAlgorithm("FIFO", algorithm.NewFIFOPageReplacement())
+	//testAlgorithm("LRU", algorithm.NewLRUPageReplacement())
 	testAlgorithm("Clock", algorithm.NewCLOCKPageReplacement(3))
-	testAlgorithm("Random", algorithm.NewRandomPageReplacement(3))
+	//testAlgorithm("Random", algorithm.NewRandomPageReplacement(3))
 }
 
 func testAlgorithm(

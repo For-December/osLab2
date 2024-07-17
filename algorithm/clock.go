@@ -7,10 +7,16 @@ type CLOCKPageReplacement struct {
 }
 
 func NewCLOCKPageReplacement(frameCount int) *CLOCKPageReplacement {
+	pages := make([]int, frameCount)
+
+	// fixBugs: 修复了pages数组的初始化问题
+	for i := range pages {
+		pages[i] = -1
+	}
 	return &CLOCKPageReplacement{
 		Clock: make([]bool, frameCount),
 		Ptr:   0,
-		Pages: make([]int, frameCount),
+		Pages: pages,
 	}
 }
 
@@ -32,18 +38,15 @@ func (clock *CLOCKPageReplacement) AccessPage(pageNumber int) {
 
 func (clock *CLOCKPageReplacement) ReplacePage() int {
 	for {
-
-		// 如果页面被访问过，则将其标记为未访问，并继续查找
+		// 如果是0，则替换页面
 		if !clock.Clock[clock.Ptr] {
-
-			// 找到要被替换的页面
 			pageToReplace := clock.Pages[clock.Ptr]
 			clock.Pages[clock.Ptr] = -1                    // 标记为空闲
 			clock.Ptr = (clock.Ptr + 1) % len(clock.Clock) // 循环移动指针
 			return pageToReplace
 		}
 
-		// 如果页面未被访问过，则将其标记为未访问，并返回
+		// 如果是1，改为0，继续下一个
 		clock.Clock[clock.Ptr] = false
 		clock.Ptr = (clock.Ptr + 1) % len(clock.Clock)
 	}
