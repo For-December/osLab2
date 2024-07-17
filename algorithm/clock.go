@@ -32,12 +32,18 @@ func (clock *CLOCKPageReplacement) AccessPage(pageNumber int) {
 
 func (clock *CLOCKPageReplacement) ReplacePage() int {
 	for {
+
+		// 如果页面被访问过，则将其标记为未访问，并继续查找
 		if !clock.Clock[clock.Hand] {
+
+			// 找到要被替换的页面
 			pageToReplace := clock.Pages[clock.Hand]
 			clock.Pages[clock.Hand] = -1
 			clock.Hand = (clock.Hand + 1) % len(clock.Clock)
 			return pageToReplace
 		}
+
+		// 如果页面未被访问过，则将其标记为未访问，并返回
 		clock.Clock[clock.Hand] = false
 		clock.Hand = (clock.Hand + 1) % len(clock.Clock)
 	}
