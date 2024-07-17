@@ -9,7 +9,7 @@ func NewLRUPageReplacement() *LRUPageReplacement {
 }
 
 func (lru *LRUPageReplacement) AccessPage(pageNumber int) {
-	// 移除已经存在的页面
+	// 将最近访问的页面移动到最后
 	for i, page := range lru.Pages {
 		if page == pageNumber {
 			lru.Pages = append(lru.Pages[:i], lru.Pages[i+1:]...)
@@ -23,6 +23,8 @@ func (lru *LRUPageReplacement) ReplacePage() int {
 	if len(lru.Pages) == 0 {
 		return -1
 	}
+
+	// 移除最近最少使用的页面，即第一个页面
 	pageToReplace := lru.Pages[0]
 	lru.Pages = lru.Pages[1:]
 	return pageToReplace
