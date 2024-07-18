@@ -1,9 +1,9 @@
 package algorithm
 
 type CLOCKPageReplacement struct {
-	Clock []bool
-	Ptr   int // 时钟指针，指向下一个要被替换的页面
-	Pages []int
+	Clock []bool // 时钟指针数组，用于标记页面是否被访问,0 1
+	Ptr   int    // 时钟指针，指向下一个要被替换的页面
+	Pages []int  // 页面数组，指针行走决定替换哪个页面
 }
 
 func NewCLOCKPageReplacement(frameCount int) *CLOCKPageReplacement {
@@ -22,6 +22,8 @@ func NewCLOCKPageReplacement(frameCount int) *CLOCKPageReplacement {
 }
 
 func (clock *CLOCKPageReplacement) AccessPage(pageNumber int) {
+
+	// 时钟包含所有物理帧，每个物理帧对应一个页面
 	for i, page := range clock.Pages {
 		if page == pageNumber {
 			clock.Clock[i] = true // 标记为已访问
